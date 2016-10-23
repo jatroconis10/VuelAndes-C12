@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import vos.*;
-import master.VuelAndesMaster;
+import tm.VuelAndesMaster;
 
 @Path("vuelos")
 public class VuelAndesVuelosServices {

@@ -53,7 +53,7 @@ public class DAOUsuario extends AbstractDAO {
 						}
 					}else{
 						if(rs.getInt("SILLAS_ECONOMICAS") > econ){
-							sql = "INSERT INTO RESERVASPASAJEROS VALUES(idNuevo,"+ tipoId + ","+id+"," + r.getIdVuelo() +",'N')";
+							sql = "INSERT INTO RESERVASPASAJEROS VALUES(" + idNuevo + ","+ tipoId + ","+id+"," + r.getIdVuelo() +",'N')";
 							prepStmt = conn.prepareStatement(sql);
 							recursos.add(prepStmt);
 							rs = prepStmt.executeQuery();
@@ -66,9 +66,9 @@ public class DAOUsuario extends AbstractDAO {
 			}
 			else{
 				if(r.getEjecutiva()){
-					sql = "INSERT INTO RESERVASPASAJEROS VALUES(idNuevo,"+ tipoId + ","+id+"," + r.getIdVuelo() +",'Y')";
+					sql = "INSERT INTO RESERVASPASAJEROS VALUES(" + idNuevo + ","+ tipoId + ","+id+"," + r.getIdVuelo() +",'Y')";
 				}else{
-					sql = "INSERT INTO RESERVASPASAJEROS VALUES(idNuevo,"+ tipoId + ","+id+"," + r.getIdVuelo() +",'N')";
+					sql = "INSERT INTO RESERVASPASAJEROS VALUES(" + idNuevo + ","+ tipoId + ","+id+"," + r.getIdVuelo() +",'N')";
 				}
 				prepStmt = conn.prepareStatement(sql);
 				recursos.add(prepStmt);
