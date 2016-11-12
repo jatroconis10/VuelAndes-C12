@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -128,6 +129,43 @@ public class VuelAndesMaster {
 		}
 	}
 	
+	public ReservaViaje hacerReservaP(SolicitudReservaPasajero sr, int tipoId, long idU) throws Exception{
+		DAOUsuario dao = new DAOUsuario();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			int rolU = dao.darTipoUsuario(tipoId, idU);
+			if(rolU >= 1 && rolU <= 3){
+				return dao.hacerReservaPasajero(sr, tipoId, idU);
+			}
+			else{
+				throw new Exception("No se tiene permiso para realizar la resrva");
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+		
+	}
+	
 	public void hacerReservaP(ReservasPasajeros r) throws Exception{
 		
 		DAOUsuario dao = new DAOUsuario();
@@ -167,7 +205,89 @@ public class VuelAndesMaster {
 			//////Transacción
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.hacerReservaCarga(r.getTipoId(),r.getIdUsuario(),r);
+			dao.hacerReservaCarga(r.getTipoId(),new Long(r.getIdUsuario()),r);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public String cancelarReservaVuelo( Long idReserva,int tipoId, Long id) throws Exception{
+
+		DAOUsuario dao = new DAOUsuario();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			
+			Date fechaActual = Calendar.getInstance().getTime();
+			Date fechaReserva = dao.darFechaReserva(idReserva);
+			if(fechaReserva.getTime()-fechaActual.getTime() > 8.64e7){
+			
+				dao.cancelarReservaVuelo(idReserva,tipoId,id);
+				return "La reserva se cancelo correctamente";
+			}
+			else{
+				throw new Exception("No puede cancelar una reserva si faltan menos de 24 horas para su vuelo");
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public String cancelarReservaViaje( Long idReserva,int tipoId, Long id) throws Exception{
+
+		DAOUsuario dao = new DAOUsuario();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			
+			Date fechaActual = Calendar.getInstance().getTime();
+			Date fechaViaje = dao.darFechaReservaViaje(idReserva);
+			if(fechaViaje.getTime()-fechaActual.getTime() > 8.64e7){
+			
+				dao.cancelarReservaViaje(idReserva,tipoId,id);
+				return "La reserva se cancelo correctamente";
+			}
+			else{
+				throw new Exception("No puede cancelar una reserva si faltan menos de 24 horas para su vuelo");
+			}
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -283,6 +403,36 @@ public class VuelAndesMaster {
 	}
 
 	public void consultarInformacionAerolinea(String a, int rol) throws SQLException,Exception {
+		DAOAerolinea dao = new DAOAerolinea();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			dao.consultarInformacionAerolinea(a,rol);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public ReporteCancelacion cancelarViaje(Long idViaje, int tipoId, Long idUsuario)throws SQLException,Exception{
 		DAOAerolinea dao = new DAOAerolinea();
 		try 
 		{

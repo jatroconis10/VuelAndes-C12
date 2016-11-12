@@ -6,12 +6,12 @@ public abstract class Reservas {
 	
 	private Integer tipoId;
 
-	private Integer idUsuario;
+	private Long idUsuario;
 	
-	private Integer idVuelo;
+	private Long idVuelo;
 
 	
-	public Reservas(Integer id, Integer tipoId, Integer idUsuario, Integer idVuelo) {
+	public Reservas(Integer id, Integer tipoId, Long idUsuario, Long idVuelo) {
 		super();
 		this.id = id;
 		this.tipoId = tipoId;
@@ -35,19 +35,19 @@ public abstract class Reservas {
 		this.tipoId = tipoId;
 	}
 
-	public Integer getIdUsuario() {
+	public Long getIdUsuario() {
 		return idUsuario;
 	}
 
-	public void setIdUsuario(Integer idUsuario) {
+	public void setIdUsuario(Long idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 
-	public Integer getIdVuelo() {
+	public Long getIdVuelo() {
 		return idVuelo;
 	}
 
-	public void setIdVuelo(Integer idVuelo) {
+	public void setIdVuelo(Long idVuelo) {
 		this.idVuelo = idVuelo;
 	}
 }

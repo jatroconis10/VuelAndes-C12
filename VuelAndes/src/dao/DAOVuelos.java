@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import vos.*;
 import vos.Vuelo.TipoViaje;
@@ -16,6 +17,109 @@ public class DAOVuelos extends AbstractDAO {
 		super();
 	}
 
+	public Date darFechaVuelo(Long idVuelo) throws SQLException,Exception{
+		
+		String sql;
+		sql = "SELECT HORA_SALIDA FROM ISIS2304A141620.VUELOS WHERE ID_VUELO="+idVuelo;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		if(rs.next()){
+			
+			return rs.getDate("HORA_SALIDA");
+		}
+		else{
+			throw new Exception("No existe ese vuelo");
+		}
+		
+	}
+	public List<Vuelo> darVuelos() throws SQLException, Exception{
+
+		String sql;
+		sql = "SELECT * FROM ISIS2304A141620.VUELOS";
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		List<Vuelo> lista = new ArrayList<>();
+
+		while(rs.next()){
+			long idVuelo= rs.getLong("ID_VUELO");
+			Date horaSalida = rs.getDate("HORA_SALIDA");
+			Date horaLlegada = rs.getDate("HORA_LLEGADA");
+			String avion = rs.getString("AVION_ASIGNADO");
+			String aerolinea = rs.getString("CODIATA_AEROLINEA");
+			String aeropuertoSalida = rs.getString("CODIATA_AEROPUERTOPARTIDA");
+			String aeropuertoLlegada = rs.getString("CODIATA_AEROPUERTOLLEGADA");
+			int tipoVuelo = rs.getInt("TIPO_VUELO");
+			int tipoViaje = rs.getInt("TIPO_VIAJE");
+			Long duracion = Long.parseLong(rs.getString("DURACION"));
+			Double distancia = rs.getDouble("DISTANCIA");
+			int frecuencia = rs.getInt("FRECUENCIA");
+
+			Vuelo act = new VueloPasajero(Vuelo.TipoViaje.INTERNACIONAL, idVuelo, horaSalida, horaLlegada, duracion, distancia, frecuencia, aeropuertoSalida, aeropuertoLlegada, aerolinea);
+			lista.add(act);
+		}
+
+		return lista;
+	}
+	
+	public Vuelo darVuelo(Long idVuelo) throws SQLException,Exception{
+		String sql;
+		sql = "SELECT * FROM ISIS2304A141620.AEROPUERTOS WHERE ID_VUELO=" + idVuelo;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		Vuelo v = null;
+		
+		if(rs.next()){
+			Date horaSalida = rs.getDate("HORA_SALIDA");
+			Date horaLlegada = rs.getDate("HORA_LLEGADA");
+			String avion = rs.getString("AVION_ASIGNADO");
+			String aerolinea = rs.getString("CODIATA_AEROLINEA");
+			String aeropuertoSalida = rs.getString("CODIATA_AEROPUERTOPARTIDA");
+			String aeropuertoLlegada = rs.getString("CODIATA_AEROPUERTOLLEGADA");
+			int tipoVuelo = rs.getInt("TIPO_VUELO");
+			int tipoViaje = rs.getInt("TIPO_VIAJE");
+			Long duracion = Long.parseLong(rs.getString("DURACION"));
+			Double distancia = rs.getDouble("DISTANCIA");
+			int frecuencia = rs.getInt("FRECUENCIA");
+
+			Vuelo act = new VueloPasajero(Vuelo.TipoViaje.INTERNACIONAL, idVuelo, horaSalida, horaLlegada, duracion, distancia, frecuencia, aeropuertoSalida, aeropuertoLlegada, aerolinea);
+			v = act;
+		}
+		else{
+			throw new Exception("No existe ese vuelo");
+		}
+		
+		return v;
+	}
+	
+	public double darCostoVueloPasajero(Long vuelo, boolean ejecutivo) throws SQLException,Exception{
+		
+		String sql;
+		sql = "SELECT * FROM ISIS2304A141620.COSTOSPASAJEROS WHERE ID_VUELO=" + vuelo;
+
+		PreparedStatement prepStmt = conn.prepareStatement(sql);
+		recursos.add(prepStmt);
+		ResultSet rs = prepStmt.executeQuery();
+		
+		if(rs.next()){
+			
+			if(ejecutivo){
+				return rs.getDouble("COSTO_EJECUTIVO");
+			}
+			else{
+				return rs.getDouble("COSTO_ECONOMICO");
+			}
+		}
+		else{
+			throw new Exception("No existe ese vuelo");
+		}
+		
+	}
 	public void asociarAeronaveAVuelo(Long v, String a)  throws SQLException, Exception{
 
 		String sql = "SELECT TIPO_AVION,SILLAS_EJECUTIVAS,SILLAS_ECONOMICAS,CAPACIDAD FROM ISIS2304A141620.AVIONES WHERE NUMERO_DE_SERIE = '"+a+"'";

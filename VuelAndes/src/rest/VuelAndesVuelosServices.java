@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -21,7 +22,7 @@ import javax.ws.rs.core.Response;
 import vos.*;
 import tm.VuelAndesMaster;
 
-@Path("vuelos")
+@Path("vuelos/{tipoId:\\d}/{idUsuario:\\d}")
 public class VuelAndesVuelosServices {
 	
 	@Context
@@ -96,6 +97,22 @@ public class VuelAndesVuelosServices {
 		VuelAndesMaster tm = new VuelAndesMaster(getPath());
 		try {
 			tm.consultarInformacionAerolinea(a,rol);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(a).build();
+	}
+	
+	@DELETE
+	@Path("cancelarViaje/{idVuelo:\\d}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response cancelarViaje(@PathParam("idVuelo")Long idVuelo,@PathParam("tipoId")int tipoId
+			,@PathParam("idUsuario")Long idU){
+		
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		ReporteCancelacion r = null;
+		try {
+			r = tm.cancelarViaje(idVuelo, tipoId, idU);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
