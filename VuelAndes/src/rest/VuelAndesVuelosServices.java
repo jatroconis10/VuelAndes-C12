@@ -22,8 +22,14 @@ import javax.ws.rs.core.Response;
 import vos.*;
 import tm.VuelAndesMaster;
 
-@Path("vuelos/{tipoId:\\d}/{idUsuario:\\d}")
+@Path("vuelos/{tipoId}/{idUsuario}")
 public class VuelAndesVuelosServices {
+	
+	@PathParam("tipoId")
+	private int tipoId;
+	
+	@PathParam("idUsuario")
+	private long idUsuario;
 	
 	@Context
 	private ServletContext context;
@@ -106,16 +112,15 @@ public class VuelAndesVuelosServices {
 	@DELETE
 	@Path("cancelarViaje/{idVuelo:\\d}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response cancelarViaje(@PathParam("idVuelo")Long idVuelo,@PathParam("tipoId")int tipoId
-			,@PathParam("idUsuario")Long idU){
+	public Response cancelarViaje(@PathParam("idVuelo")Long idVuelo,@PathParam("tipoId")int tipoId){
 		
 		VuelAndesMaster tm = new VuelAndesMaster(getPath());
 		ReporteCancelacion r = null;
 		try {
-			r = tm.cancelarViaje(idVuelo, tipoId, idU);
+			r = tm.cancelarViaje(idVuelo, tipoId, idUsuario);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
-		return Response.status(200).entity(a).build();
+		return Response.status(200).entity("").build();
 	}
 }

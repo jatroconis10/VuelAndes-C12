@@ -439,7 +439,7 @@ public class VuelAndesMaster {
 			//////Transacción
 			this.conn = darConexion();
 			dao.setConn(conn);
-			dao.consultarInformacionAerolinea(a,rol);
+			return null;
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
