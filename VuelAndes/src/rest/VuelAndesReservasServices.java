@@ -32,6 +32,20 @@ public class VuelAndesReservasServices {
 		return "{ \"ERROR\": \""+ e.getMessage() + "\"}" ;
 	}
 	
+	@GET
+	@Path("commit")
+	public Response hacerCommit(){
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		try{
+			tm.hacerCommit();
+			return Response.status(204).entity("Se hizo commit").build();
+		}
+		catch (Exception e){
+			System.out.println(e.getMessage());
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+	}
+	
 	@POST
 	@Path("reservarPasajero")
 	@Produces(MediaType.APPLICATION_JSON)

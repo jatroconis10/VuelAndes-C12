@@ -7,19 +7,21 @@ public abstract class Vuelo {
 	    INTERNACIONAL,NACIONAL
 	}
 	
-	private TipoViaje tipo;
-	private Long idVuelo;
-	private Date horaSalida;
-	private Date horaLlegada;
-	private Long duracion;
-	private Double distancia;
-	private Integer frecuencia;
-	private String aeroPuertoSalida;
-	private String aeroPuertoLlegada;
-	private String codIATAaerolinea;
+	protected TipoViaje tipo;
+	protected Long idVuelo;
+	protected Date horaSalida;
+	protected Date horaLlegada;
+	protected Long duracion;
+	protected Double distancia;
+	protected Integer frecuencia;
+	protected String aeroPuertoSalida;
+	protected String aeroPuertoLlegada;
+	protected String codIATAaerolinea;
 	
 	
-	
+	public Vuelo(){
+		
+	}
 	
 	public Vuelo(TipoViaje tipo, Long idVuelo, Date horaSalida, Date horaLlegada, Long duracion, Double distancia,
 			Integer frecuencia, String aeroPuertoSalida, String aeroPuertoLlegada, String codIATAaerolinea) {

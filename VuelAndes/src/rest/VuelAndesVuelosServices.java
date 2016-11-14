@@ -2,6 +2,7 @@ package rest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -81,20 +82,53 @@ public class VuelAndesVuelosServices {
 		}
 		return Response.status(200).entity(reporte).build();
 	}
+	
 	@GET
 	@Path("itinerario/{aeropuertoId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response consultarItinerarioAeropuerto(@PathParam("aeropuertoId") String a ) {
+	public Response consultarItinerarioAeropuerto(
+			@PathParam("aeropuertoId") String a,
+			@DefaultValue("")@QueryParam("fechaInit")String fechaI,
+			@DefaultValue("")@QueryParam("fechaFinal")String fechaF,
+			@DefaultValue("")@QueryParam("aerolinea")String aero,
+			@DefaultValue("0")@QueryParam("tipoAeronave")int tipo,
+			@DefaultValue("")@QueryParam("horaSalida")String hSalida,
+			@DefaultValue("")@QueryParam("horaLLegada")String hLlegada) 
+	{
 		System.out.println("Entrar al servicio");
 		ArrayList<Vuelo> itinerario;
 		VuelAndesMaster tm = new VuelAndesMaster(getPath());
 		try {
-			itinerario = tm.consultarIntinerario(a);
+			itinerario = tm.consultarIntinerario(a,fechaI,fechaF,aero,tipo,hSalida,hLlegada);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}
 		return Response.status(200).entity(itinerario).build();
 	}
+	
+	@GET
+	@Path("itinerarioCondNeg/{aeropuertoId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultarItinerarioNoCumpleAeropuerto(
+			@PathParam("aeropuertoId") String a,
+			@DefaultValue("")@QueryParam("fechaInit")String fechaI,
+			@DefaultValue("")@QueryParam("fechaFinal")String fechaF,
+			@DefaultValue("")@QueryParam("aerolinea")String aero,
+			@DefaultValue("0")@QueryParam("tipoAeronave")int tipo,
+			@DefaultValue("")@QueryParam("horaSalida")String hSalida,
+			@DefaultValue("")@QueryParam("horaLLegada")String hLlegada) 
+	{
+		System.out.println("Entrar al servicio");
+		ArrayList<Vuelo> itinerario;
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		try {
+			itinerario = tm.consultarIntinerario(a,fechaI,fechaF,aero,tipo,hSalida,hLlegada);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity(itinerario).build();
+	}
+	
 	@GET
 	@Path("infoAerolinea/{aerolineaId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -118,6 +152,41 @@ public class VuelAndesVuelosServices {
 		ReporteCancelacion r = null;
 		try {
 			r = tm.cancelarViaje(idVuelo, tipoId, idUsuario);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity("").build();
+	}
+	
+	@GET
+	@Path("consultarViajes/{millas:\\d}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response consultarViajes(@PathParam("millas")int millas,
+			@DefaultValue("")@QueryParam("fechaI")String fechaI,
+			@DefaultValue("")@QueryParam("fechaF")String fechaF){
+		
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		List<InfoViaje> r = null;
+		try {
+			r = tm.consultarViajes(tipoId, idUsuario, millas, fechaI, fechaF);
+		} catch (Exception e) {
+			return Response.status(500).entity(doErrorMessage(e)).build();
+		}
+		return Response.status(200).entity("").build();
+	}
+	
+	@GET
+	@Path("traficoEntre/{ciudad1}/{ciudad2}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response darTraficoEntre(@PathParam("ciudad1")String c1, 
+			@PathParam("ciudad2")String c2,
+			@DefaultValue("")@QueryParam("fechaI")String fechaI,
+			@DefaultValue("")@QueryParam("fechaF")String fechaF)
+	{
+		VuelAndesMaster tm = new VuelAndesMaster(getPath());
+		List<InfoViaje> r = null;
+		try {
+			r = tm.consultarTraficoEntre(tipoId, idUsuario, c1, c2, fechaI, fechaF);
 		} catch (Exception e) {
 			return Response.status(500).entity(doErrorMessage(e)).build();
 		}

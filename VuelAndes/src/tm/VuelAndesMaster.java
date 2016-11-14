@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import dao.*;
@@ -372,14 +373,44 @@ public class VuelAndesMaster {
 		
 	}
 
-	public ArrayList<Vuelo> consultarIntinerario(String a) throws SQLException {
+	public ArrayList<Vuelo> consultarIntinerario(String a,String fechaI,String fechaF,String aero,int tipo, String hSalida,String hLlegada) throws SQLException {
 		DAOVuelos dao = new DAOVuelos();
 		try 
 		{
 			//////Transacción
 			this.conn = darConexion();
 			dao.setConn(conn);
-			return dao.consultarIntinerario(a);
+			return dao.consultarIntinerario(a, fechaI, fechaF, aero,tipo, hSalida, hLlegada);
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				dao.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public ArrayList<Vuelo> consultarIntinerarioNoCumple(String a,String fechaI,String fechaF,String aero,int tipo, String hSalida,String hLlegada) throws SQLException {
+		DAOVuelos dao = new DAOVuelos();
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			dao.setConn(conn);
+			return dao.consultarIntinerario(a, fechaI, fechaF, aero, tipo, hSalida, hLlegada);
 
 		} catch (SQLException e) {
 			System.err.println("SQLException:" + e.getMessage());
@@ -460,5 +491,94 @@ public class VuelAndesMaster {
 				throw exception;
 			}
 		}
+	}
+	
+	public List<InfoViaje> consultarViajes(int tipoId, long idUsario, int millas, String fechaI, String fechaF) throws SQLException,Exception {
+		DAOVuelos daoV = new DAOVuelos();
+		DAOUsuario daoU = new DAOUsuario();
+		
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoV.setConn(conn);
+			daoU.setConn(conn);
+			
+			int rolU = daoU.darTipoUsuario(tipoId, idUsario);
+			if(rolU == 1){
+				return daoV.consultarViajesGenerales(millas, fechaI, fechaF);
+			}
+			else if(rolU == 3){
+				return daoV.consultarViajesUsuario(tipoId, idUsario, millas, fechaI, fechaF);
+			}
+			else{
+				throw new Exception("No tiene permisos para realizar esta accion");
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoU.cerrarRecursos();
+				daoV.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public List<InfoViaje> consultarTraficoEntre(int tipoId, long idUsario,String c1, String c2, String fechaI, String fechaF) throws SQLException,Exception {
+		DAOVuelos daoV = new DAOVuelos();
+		DAOUsuario daoU = new DAOUsuario();
+		
+		try 
+		{
+			//////Transacción
+			this.conn = darConexion();
+			daoV.setConn(conn);
+			daoU.setConn(conn);
+			
+			int rolU = daoU.darTipoUsuario(tipoId, idUsario);
+			if(rolU == 1){
+				return daoV.consultarTraficoEntre(c1, c2, fechaI, fechaF);
+			}
+			else{
+				throw new Exception("No tiene permisos para realizar esta accion");
+			}
+
+		} catch (SQLException e) {
+			System.err.println("SQLException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} catch (Exception e) {
+			System.err.println("GeneralException:" + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			try {
+				daoU.cerrarRecursos();
+				daoV.cerrarRecursos();
+				if(this.conn!=null)
+					this.conn.close();
+			} catch (SQLException exception) {
+				System.err.println("SQLException closing resources:" + exception.getMessage());
+				exception.printStackTrace();
+				throw exception;
+			}
+		}
+	}
+	
+	public void hacerCommit() throws SQLException, Exception{
+		conn.commit();
 	}
 }
