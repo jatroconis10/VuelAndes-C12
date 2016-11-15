@@ -334,7 +334,7 @@ public class DAOVuelos extends AbstractDAO {
 	}
 	
 	public ArrayList<Vuelo> consultarIntinerarioNoCumple(String a,String fechaI,String fechaF,String aero,int tipo, String hSalida,String hLlegada) throws SQLException {
-		String sql = "SELECT * FROM ISIS2304A141620.VUELOS v INNER JOIN VUELOSPROGRAMADOS vp WHERE (v.CODIATA_AEROPUERTOPARTIDA = '"+a+"' OR "+ "v.CODIATA_AEROPUERTOLLEGADA = '"+a+"')" ;
+		String sql = "SELECT * FROM ISIS2304A141620.VUELOS v NATURAL JOIN VUELOSPROGRAMADOS vp WHERE (v.CODIATA_AEROPUERTOPARTIDA = '"+a+"' OR "+ "v.CODIATA_AEROPUERTOLLEGADA = '"+a+"')" ;
 		
 		if(!fechaI.isEmpty()){
 			sql+=" AND vp.FECHA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
@@ -392,10 +392,10 @@ public class DAOVuelos extends AbstractDAO {
 		String sql = "SELECT * FROM VUELOSREALIZADOS vr NATURAL JOIN VUELOS v WHERE v.DISTANCIA >" + millas;
 		
 		if(!fechaI.isEmpty()){
-			sql+=" AND vr.FECHA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
 		}
 		if(!fechaF.isEmpty()){
-			sql+=" AND vr.FECHA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
 		}
 		
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -422,10 +422,10 @@ public class DAOVuelos extends AbstractDAO {
 				+ " NATURAL JOIN VUELOS v WHERE v.DISTANCIA >" + millas +" AND rp.TIPO_ID = "+ tipoId + " AND rp.ID_USUARIO = "+ IdUsuario;
 
 		if(!fechaI.isEmpty()){
-			sql+=" AND vr.FECHA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
 		}
 		if(!fechaF.isEmpty()){
-			sql+=" AND vr.FECHA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
 		}
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
@@ -448,15 +448,15 @@ public class DAOVuelos extends AbstractDAO {
 	}
 	
 	public List<InfoViaje> consultarTraficoEntre(String c1, String c2, String fechaI, String fechaF) throws SQLException{
-		String sql = "SELECT * FROM VUELOS v NATURAL JOIN VUELOSPROGRAMADOS vp "
-				+ "WHERE (v.CODIATA_AEROPUERTOPARTIDA = '" + c1 + "' OR v.CODIATA_AEROPUERTOSALIDA = '" + c1 +") "
-						+ "AND (v.CODIATA_AEROPUERTOPARTIDA = '" + c2 + "' OR v.CODIATA_AEROPUERTOSALIDA = '" + c2 +")";
+		String sql = "SELECT * FROM VUELOS NATURAL JOIN VUELOSPROGRAMADOS "
+				+ "WHERE (CODIATA_AEROPUERTOPARTIDA = '" + c1 + "' AND CODIATA_AEROPUERTOSALIDA = '" + c2 +"') "
+						+ "OR (CODIATA_AEROPUERTOPARTIDA = '" + c2 + "' AND CODIATA_AEROPUERTOSALIDA = '" + c1 +"')";
 
 		if(!fechaI.isEmpty()){
-			sql+=" AND vr.FECHA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_SALIDA > TO_DATE(" + fechaI + ",'DD/MM/YYYY')";
 		}
 		if(!fechaF.isEmpty()){
-			sql+=" AND vr.FECHA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
+			sql+=" AND vr.HORA_LLEGADA < TO_DATE(" + fechaF + ",'DD/MM/YYYY')";
 		}
 
 		PreparedStatement prepStmt = conn.prepareStatement(sql);
